@@ -1,4 +1,4 @@
-import { getProblems } from '../service/problemService.js';
+import { getProblemById, getProblems } from '../service/problemService.js';
 
 export async function getProblemsController(req, res, next) {
     try {
@@ -6,6 +6,21 @@ export async function getProblemsController(req, res, next) {
 
         console.log("fetching problems");
         res.json(problems);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function getProblemController(req, res, next) {
+    try {
+        const problem = await getProblemById(req.params.id);
+
+        if (!problem) {
+            res.status(404).json({ error: 'Problem not found' });
+            return;
+        }
+
+        res.json(problem);
     } catch (error) {
         next(error);
     }

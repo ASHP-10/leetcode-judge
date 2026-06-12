@@ -1,6 +1,6 @@
 import client from '../config/dynamodb.js';
 
-import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, ScanCommand, GetCommand} from '@aws-sdk/lib-dynamodb';
 
 const docClient = DynamoDBDocumentClient.from(client);
 
@@ -20,4 +20,17 @@ export async function getProblems() {
     return response.Items;
 }
 
-export default getProblems;
+export async function getProblemById(id) {
+    const response = await docClient.send(
+        new GetCommand({
+            TableName: 'Problem',
+            Key: {
+                problemId: Number(id)
+            }
+        })
+    )
+
+    return response.Item;
+}
+
+export default {getProblemById, getProblems};

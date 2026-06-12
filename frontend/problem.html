@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Problem Details</title>
+        <link rel="stylesheet" href="./styles.css">
+        <script src="./problem.js" defer></script>
+    </head>
+    <body>
+        <main>
+            <a class="back-link" href="./index.html">Back to problems</a>
+            <p id="status">Loading problem...</p>
+
+            <section id="problem-detail" class="problem-detail" hidden>
+                <div class="detail-header">
+                    <div>
+                        <p id="problem-id" class="problem-id"></p>
+                        <h1 id="problem-name"></h1>
+                    </div>
+                    <span id="difficulty"></span>
+                </div>
+
+                <section>
+                    <h2>Description</h2>
+                    <p id="description"></p>
+                </section>
+
+                <section>
+                    <h2>Test Cases</h2>
+                    <div id="test-cases" class="test-cases"></div>
+                </section>
+            </section>
+        </main>
+    </body>
+</html>

@@ -44,6 +44,13 @@ ul {
     border: 1px solid #ddd;
     border-radius: 6px;
     background: #fff;
+    color: inherit;
+    text-decoration: none;
+}
+
+.problem-item:hover {
+    border-color: #aaa;
+    background: #fafafa;
 }
 
 .problem-id {
@@ -84,6 +91,79 @@ ul {
     background: #e2e3e5;
 }
 
+.back-link {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #333;
+}
+
+.problem-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-header h1 {
+    margin-bottom: 0;
+}
+
+h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+}
+
+#description {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.test-cases {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.test-case {
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.test-case h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+}
+
+.map-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-top: 1px solid #eee;
+}
+
+.map-key {
+    color: #666;
+    font-weight: 700;
+}
+
+.map-value {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: Consolas, Monaco, monospace;
+}
+
 @media (max-width: 520px) {
     .problem-item {
         grid-template-columns: 56px 1fr;
@@ -92,5 +172,13 @@ ul {
     .difficulty {
         grid-column: 2;
         justify-self: start;
+    }
+
+    .detail-header {
+        flex-direction: column;
+    }
+
+    .map-row {
+        grid-template-columns: 1fr;
     }
 }

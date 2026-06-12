@@ -3,7 +3,9 @@ const problemsElement = document.getElementById('problems');
 
 function createProblemItem(problem) {
     const item = document.createElement('li');
-    item.className = 'problem-item';
+    const link = document.createElement('a');
+    link.className = 'problem-item';
+    link.href = `./problem.html?id=${encodeURIComponent(problem.problemId)}`;
 
     const id = document.createElement('span');
     id.className = 'problem-id';
@@ -18,7 +20,8 @@ function createProblemItem(problem) {
     difficulty.className = `difficulty ${difficultyValue.toLowerCase()}`;
     difficulty.textContent = difficultyValue;
 
-    item.append(id, name, difficulty);
+    link.append(id, name, difficulty);
+    item.appendChild(link);
     return item;
 }
 

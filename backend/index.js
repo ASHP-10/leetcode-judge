@@ -26,6 +26,11 @@ app.get('/', (req, res) => {
 
 app.use('/problems', problemRoutes);
 
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+});
+
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
