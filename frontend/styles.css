@@ -1,0 +1,96 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #222;
+    background: #f7f7f7;
+}
+
+main {
+    max-width: 720px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    margin: 0 0 16px;
+    font-size: 32px;
+}
+
+#status {
+    margin: 0 0 16px;
+    color: #555;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.problem-item {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    min-height: 56px;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.problem-id {
+    color: #666;
+    font-size: 14px;
+}
+
+.problem-name {
+    font-weight: 600;
+}
+
+.difficulty {
+    min-width: 76px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.difficulty.easy {
+    color: #0f5132;
+    background: #d1e7dd;
+}
+
+.difficulty.medium {
+    color: #664d03;
+    background: #fff3cd;
+}
+
+.difficulty.hard {
+    color: #842029;
+    background: #f8d7da;
+}
+
+.difficulty.unknown {
+    color: #41464b;
+    background: #e2e3e5;
+}
+
+@media (max-width: 520px) {
+    .problem-item {
+        grid-template-columns: 56px 1fr;
+    }
+
+    .difficulty {
+        grid-column: 2;
+        justify-self: start;
+    }
+}
