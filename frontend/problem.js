@@ -164,7 +164,7 @@ async function submitSolution(event) {
             throw new Error(`Request failed with status ${response.status}`);
         }
 
-        window.location.href = './submission.html';
+        //window.location.href = './submission.html';
     } catch (error) {
         submissionStatusElement.textContent = `Could not submit solution: ${error.message}`;
     }

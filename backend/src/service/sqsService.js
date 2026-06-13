@@ -1,15 +1,15 @@
-import { SQSClient } from "@aws-sdk/client-sqs";
 import { SendMessageCommand } from "@aws-sdk/client-sqs";
+import sqsClient from "../config/sqs.js";
 
 export async function sendSubmissionToQueue(submission) {
-    const command = SendMessageCommand(
+    const command = new SendMessageCommand(
         {
-            QueueURL: process.env.QueueURL,
+            QueueUrl: process.env.SQS_QUEUE_URL,
             MessageBody: JSON.stringify(submission)
         }
     )
 
-    const response = await SQSClient.send(command);
+    const response = await sqsClient.send(command);
 
     return response;
 }
