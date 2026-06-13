@@ -5,6 +5,10 @@ const problemNameElement = document.getElementById('problem-name');
 const difficultyElement = document.getElementById('difficulty');
 const descriptionElement = document.getElementById('description');
 const testCasesElement = document.getElementById('test-cases');
+const submissionForm = document.getElementById('submission-form');
+const languageElement = document.getElementById('language');
+const codeElement = document.getElementById('code');
+const submissionStatusElement = document.getElementById('submission-status');
 
 function getProblemId() {
     const params = new URLSearchParams(window.location.search);
@@ -129,4 +133,42 @@ async function loadProblem() {
     }
 }
 
+async function submitSolution(event) {
+    event.preventDefault();
+
+    const problemId = getProblemId();
+    const code = codeElement.value.trim();
+    const language = languageElement.value;
+
+    if (!code) {
+        submissionStatusElement.textContent = 'Please enter your code before submitting.';
+        return;
+    }
+
+    submissionStatusElement.textContent = 'Submitting...';
+
+    try {
+        const response = await fetch('http://localhost:3000/submission', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                problemId,
+                language,
+                code
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        window.location.href = './submission.html';
+    } catch (error) {
+        submissionStatusElement.textContent = `Could not submit solution: ${error.message}`;
+    }
+}
+
+submissionForm.addEventListener('submit', submitSolution);
 loadProblem();

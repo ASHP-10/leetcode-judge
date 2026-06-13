@@ -1,12 +1,13 @@
 import express from 'express';
 import problemRoutes from './src/routes/problemRoutes.js';
+import submissionRoutes from './src/routes/submissionRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/problems', problemRoutes);
+app.use('/submission', submissionRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err);

@@ -11,7 +11,7 @@ export async function getProblemsController(req, res, next) {
     }
 }
 
-export async function getProblemController(req, res, next) {
+export async function getProblemByIdController(req, res, next) {
     try {
         const problem = await getProblemById(req.params.id);
 
