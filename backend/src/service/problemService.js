@@ -1,8 +1,8 @@
-import client from '../config/dynamodb.js';
+import docClient from '../config/dynamodb.js';
 
-import { DynamoDBDocumentClient, ScanCommand, GetCommand} from '@aws-sdk/lib-dynamodb';
+import { ScanCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 
-const docClient = DynamoDBDocumentClient.from(client);
+
 
 export async function getProblems() {
 
@@ -33,4 +33,4 @@ export async function getProblemById(id) {
     return response.Item;
 }
 
-export default {getProblemById, getProblems};
+export default { getProblemById, getProblems };

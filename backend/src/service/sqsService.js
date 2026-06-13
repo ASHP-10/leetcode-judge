@@ -5,7 +5,7 @@ export async function sendSubmissionToQueue(submission) {
     const command = new SendMessageCommand(
         {
             QueueUrl: process.env.SQS_QUEUE_URL,
-            MessageBody: JSON.stringify(submission)
+            MessageBody: (submission)
         }
     )
 

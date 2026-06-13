@@ -1,13 +1,14 @@
 import { sendSubmissionToQueue } from "../service/sqsService.js";
-import { createSubmissionId } from "../service/submissionService.js"
+import { storeSubmissionRequest } from "../service/submissionService.js"
+
 
 export async function submissionController(req, res, next) {
     console.log("Got request");
     try {
-        //const submissionId = await createSubmissionId(req);
+        const submissionId = await storeSubmissionRequest(req);
 
-        const submissionId = 1;
-        if (!submissionId) {
+        // const submissionId = 1;
+        if (submissionId == null || undefined) {
             return res.status(500).json({
                 message: "submissionId not generated"
             });
@@ -20,7 +21,7 @@ export async function submissionController(req, res, next) {
             console.log(response);
         }
 
-        console.log(res)
+        console.log("Sent Submission ID " + submissionId + " To the QUEUE");
         res.json(submissionId);
     } catch (error) {
         next(error);
