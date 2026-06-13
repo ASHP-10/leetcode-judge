@@ -14,7 +14,7 @@ export async function submissionController(req, res, next) {
             });
         }
 
-        const response = await sendSubmissionToQueue(submissionId);
+        const response = await sendSubmissionToQueue(req, submissionId);
 
         if (response.$metadata.httpStatusCode != 200) {
             console.log("Not Pushed to Queue")
