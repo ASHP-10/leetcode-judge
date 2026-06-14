@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
     console.log("got request");
 });
 
-app.use('/problems', problemRoutes);
+app.use('/problem', problemRoutes);
 app.use('/submission', submissionRoutes);
 
 app.use((err, req, res, next) => {

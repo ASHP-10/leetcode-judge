@@ -1,32 +1,53 @@
 #!/bin/bash
 
 LANGUAGE=$1
-CODE_FILE=$2
-TIMEOUT=5
+
+cd /sandbox
 
 case "$LANGUAGE" in
-  cpp)
-    # Compile to /tmp — needs exec permission on /tmp tmpfs
-    g++ -O2 -o /tmp/solution "$CODE_FILE" 2>&1
+
+cpp)
+
+    echo "Compiling C++..."
+
+    g++ Main.cpp -O2 -std=c++17 -o solution
+
     if [ $? -ne 0 ]; then
-      echo "Compilation Error"
-      exit 1
+        echo "Compilation Error"
+        exit 1
     fi
-    timeout $TIMEOUT /tmp/solution
+
+    echo "Running..."
+
+    timeout 5s ./solution \
+        < input.txt \
+        > output.txt
+
     ;;
 
-  java)
-    javac -d /tmp "$CODE_FILE" 2>&1
+java)
+
+    echo "Compiling Java..."
+
+    javac Main.java
+
     if [ $? -ne 0 ]; then
-      echo "Compilation Error"
-      exit 1
+        echo "Compilation Error"
+        exit 1
     fi
-    CLASS_NAME=$(basename "$CODE_FILE" .java)
-    timeout $TIMEOUT java -cp /tmp "$CLASS_NAME"
+
+    echo "Running..."
+
+    timeout 5s java Main \
+        < input.txt \
+        > output.txt
+
     ;;
 
-  *)
-    echo "Unsupported language: $LANGUAGE"
+*)
+
+    echo "Unsupported language"
     exit 1
+
     ;;
 esac
