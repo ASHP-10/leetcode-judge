@@ -89,10 +89,11 @@ The container expects the following directory structure:
 ```text
 <current-directory>
 │
-└── <submission-id>
-   ├── Main.cpp
-   ├── input1.txt
-   └── output1.txt
+└──submissions
+    └─<submission-id>
+       ├── Main.cpp
+       ├── input1.txt
+       └── output1.txt
 ```
 
 Currently supported languages:
@@ -107,17 +108,17 @@ Currently supported languages:
 Build the Docker image from the project directory.
 
 ```bash
-docker build -t <tag-name> .
+docker build -t <tag-name> <Dockerfile-directory>
 ```
 
 ---
 
 ## Step 2: Run the Judge Container
 
-Run the container and mount the `<submission-id>` directory into the sandbox environment.
+Run the container and mount the `<submissions/` directory into the sandbox environment.
 
 ```bash
-docker run -v $(pwd):/sandbox <tag-name> <language>
+docker run -v $(pwd)/submissions:/sandbox <tag-name> <language>
 ```
 
 ### Parameters
@@ -132,7 +133,7 @@ docker run -v $(pwd):/sandbox <tag-name> <language>
 ## Execution Flow
 
 1. Docker starts the judge container.
-2. The `<submission-id>` directory is mounted to `/sandbox`.
+2. The `/submission` directory is mounted to `/sandbox`.
 3. The entrypoint script detects the selected language.
 4. The source code is compiled.
 5. The program is executed using `input1.txt`, `input2.txt`....
@@ -145,15 +146,16 @@ docker run -v $(pwd):/sandbox <tag-name> <language>
 
 ### Successful Execution
 
-A file named `solution.txt` will be generated inside the `<submission-id>` directory.
+A file named `solution.txt` will be generated inside the `/submission/<submission-id>/` directory.
 
 ```text
-<submission-id>
-├── Main.cpp
-├── input1.txt
-├── output1.txt
-├── solution.txt
-└── solution
+submissions
+ └─<submission-id>
+    └── Main.cpp
+       ├── input1.txt
+       ├── output1.txt
+       ├── solution.txt
+       └── solution
 ```
 
 ### Compilation Error
@@ -165,10 +167,6 @@ If compilation fails, the container exits and displays the compilation error.
 If the program crashes or exceeds the execution timeout, the corresponding runtime error is displayed.
 
 ---
-
-## Future ECS/Fargate Integration
-
-The local bind-mounted `/sandbox` directory will eventually be replaced with Amazon S3.
 
 ### Planned Flow
 
