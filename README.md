@@ -89,9 +89,10 @@ The container expects the following directory structure:
 ```text
 <current-directory>
 │
-└── submissions
-    ├── Main.cpp
-    └── input.txt
+└── <submission-id>
+   ├── Main.cpp
+   ├── input1.txt
+   └── output1.txt
 ```
 
 Currently supported languages:
@@ -113,10 +114,10 @@ docker build -t <tag-name> .
 
 ## Step 2: Run the Judge Container
 
-Run the container and mount the `submissions` directory into the sandbox environment.
+Run the container and mount the `<submission-id>` directory into the sandbox environment.
 
 ```bash
-docker run -v $(pwd)/submissions:/sandbox <tag-name> <language>
+docker run -v $(pwd):/sandbox <tag-name> <language>
 ```
 
 ### Parameters
@@ -131,11 +132,12 @@ docker run -v $(pwd)/submissions:/sandbox <tag-name> <language>
 ## Execution Flow
 
 1. Docker starts the judge container.
-2. The `submissions` directory is mounted to `/sandbox`.
+2. The `<submission-id>` directory is mounted to `/sandbox`.
 3. The entrypoint script detects the selected language.
 4. The source code is compiled.
-5. The program is executed using `input.txt`.
-6. Output is written to `output.txt`.
+5. The program is executed using `input1.txt`, `input2.txt`....
+6. Output is written to `solution.txt` and checked with the `output1.txt`` output2.txt`....
+7. The Program continues executing all the test cases and stops when the first test case fails.
 
 ---
 
@@ -143,13 +145,15 @@ docker run -v $(pwd)/submissions:/sandbox <tag-name> <language>
 
 ### Successful Execution
 
-A file named `output.txt` will be generated inside the `submissions` directory.
+A file named `solution.txt` will be generated inside the `<submission-id>` directory.
 
 ```text
-submissions
+<submission-id>
 ├── Main.cpp
-├── input.txt
-└── output.txt
+├── input1.txt
+├── output1.txt
+├── solution.txt
+└── solution
 ```
 
 ### Compilation Error
@@ -164,14 +168,12 @@ If the program crashes or exceeds the execution timeout, the corresponding runti
 
 ## Future ECS/Fargate Integration
 
-The local bind-mounted `submissions` directory will eventually be replaced with Amazon S3.
+The local bind-mounted `/sandbox` directory will eventually be replaced with Amazon S3.
 
 ### Planned Flow
 
 ```text
 User Submission
-      ↓
-Upload Source Code to S3
       ↓
 Send Submission Message to SQS
       ↓
@@ -181,9 +183,11 @@ Judge Downloads:
     - Source Code
     - Test Cases
       ↓
+Invokes Conatiner
+      ↓
 Compile & Execute
       ↓
 Store Result in DynamoDB
 ```
 
-Used GPT 5.3 for generation of the frontend website, Creating this README.md file and docker container creation.
+Used GPT 5.3 for generation of the frontend website and creating this README.md file

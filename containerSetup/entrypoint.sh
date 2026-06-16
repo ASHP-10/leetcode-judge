@@ -1,16 +1,21 @@
 #!/bin/bash
 
-LANGUAGE=$1
-
 cd /sandbox
+
+# echo $(pwd)
+# echo $(ls)
+submissionId=1
+LANGUAGE=$1
+count=$(find submissions/$submissionId/ -maxdepth 1 -type f -regex '.*/input[0-9]+.txt' | wc -l)
 
 case "$LANGUAGE" in
 
+
 cpp)
 
-    echo "Compiling C++..."
+    echo "C++..."
 
-    g++ Main.cpp -O2 -std=c++17 -o solution
+    g++ submissions/$submissionId/Main.cpp -O2 -std=c++17 -o solution
 
     if [ $? -ne 0 ]; then
         echo "Compilation Error"
@@ -19,9 +24,20 @@ cpp)
 
     echo "Running..."
 
-    timeout 5s ./solution \
-        < input.txt \
-        > output.txt
+    for ((i=1; i<=$count; i++))
+    do
+        timeout 5s ./solution \
+            < submissions/$submissionId/input$i.txt \
+            > submissions/$submissionId/solution.txt
+
+        if cmp -s "submissions/$submissionId/solution.txt" "submissions/$submissionId/output$i.txt"; then
+            echo "$i th test case passed"
+            rm submissions/$submissionId/solution.txt
+        else
+            echo "Failed on $i th test case"
+            exit 1
+        fi 
+    done
 
     ;;
 
