@@ -120,7 +120,7 @@ async function loadProblem() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/problems/${encodeURIComponent(problemId)}`);
+        const response = await fetch(`http://localhost:3000/problem/${encodeURIComponent(problemId)}`);
 
         if (!response.ok) {
             throw new Error(`Request failed with status ${response.status}`);
@@ -139,9 +139,15 @@ async function submitSolution(event) {
     const problemId = getProblemId();
     const code = codeElement.value.trim();
     const language = languageElement.value;
+    const method = event.submitter?.value;
 
     if (!code) {
         submissionStatusElement.textContent = 'Please enter your code before submitting.';
+        return;
+    }
+
+    if (!method) {
+        submissionStatusElement.textContent = 'Please choose a submission method.';
         return;
     }
 
@@ -156,7 +162,8 @@ async function submitSolution(event) {
             body: JSON.stringify({
                 problemId,
                 language,
-                code
+                code,
+                method
             })
         });
 

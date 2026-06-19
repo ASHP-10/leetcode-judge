@@ -10,10 +10,11 @@ export async function storeSubmissionRequest(request) {
             TableName: "Submissions",
             Item: {
                 submissionId: submissionId,
-                problemId: request.params.problemId,
-                language: request.params.language,
-                code: request.params.code,
-                status: "PENDING"
+                problemId: request.body.problemId,
+                language: request.body.language,
+                code: request.body.code,
+                status: "PENDING",
+                method: request.body.method
             }
         });
 

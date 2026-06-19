@@ -27,7 +27,7 @@ function createProblemItem(problem) {
 
 async function loadProblems() {
     try {
-        const response = await fetch('http://localhost:3000/problems');
+        const response = await fetch('http://localhost:3000/problem');
 
         if (!response.ok) {
             throw new Error(`Request failed with status ${response.status}`);

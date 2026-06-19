@@ -189,7 +189,13 @@ h2 {
     font-family: Consolas, Monaco, monospace;
 }
 
-.submission-form button {
+.submission-methods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.submission-methods button {
     align-self: flex-start;
     border: 0;
     border-radius: 6px;
@@ -201,7 +207,7 @@ h2 {
     cursor: pointer;
 }
 
-.submission-form button:hover {
+.submission-methods button:hover {
     background: #444;
 }
 
