@@ -4,8 +4,8 @@ cd /sandbox
 
 # echo $(pwd)
 # echo $(ls)
-submissionId=1
-LANGUAGE=$1
+submissionId=$1
+LANGUAGE=$2
 count=$(find submissions/$submissionId/ -maxdepth 1 -type f -regex '.*/input[0-9]+.txt' | wc -l)
 
 case "$LANGUAGE" in
@@ -30,7 +30,7 @@ cpp)
             < submissions/$submissionId/input$i.txt \
             > submissions/$submissionId/solution.txt
 
-        if cmp -s "submissions/$submissionId/solution.txt" "submissions/$submissionId/output$i.txt"; then
+        if diff -wB "submissions/$submissionId/solution.txt" "submissions/$submissionId/output$i.txt" >/dev/null; then
             echo "$i th test case passed"
             rm submissions/$submissionId/solution.txt
         else
@@ -45,7 +45,7 @@ java)
 
     echo "Compiling Java..."
 
-    javac Main.java
+    javac submissions/$submissionId/Main.java
 
     if [ $? -ne 0 ]; then
         echo "Compilation Error"
@@ -54,12 +54,22 @@ java)
 
     echo "Running..."
 
-    timeout 5s java Main \
-        < input.txt \
-        > output.txt
+    for ((i=1; i<=$count; i++))
+    do
+        timeout 5s java -cp submissions/$submissionId Main \
+            < submissions/$submissionId/input$i.txt \
+            > submissions/$submissionId/solution.txt
+
+        if diff -wB "submissions/$submissionId/solution.txt" "submissions/$submissionId/output$i.txt" >/dev/null; then
+            echo "$i th test case passed"
+            rm submissions/$submissionId/solution.txt
+        else
+            echo "Failed on $i th test case"
+            exit 1
+        fi
+    done
 
     ;;
-
 *)
 
     echo "Unsupported language"
