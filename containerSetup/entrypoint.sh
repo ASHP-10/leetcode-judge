@@ -2,8 +2,8 @@
 
 cd /sandbox
 
-# echo $(pwd)
-# echo $(ls)
+echo $(pwd)
+echo $(ls)
 submissionId=$1
 LANGUAGE=$2
 time=$3

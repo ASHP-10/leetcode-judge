@@ -1,7 +1,7 @@
 import { SQSClient, ReceiveMessageCommand, DeleteMessageCommand } from "@aws-sdk/client-sqs";
 
 
-export const sqsClient = new SQSClient({
+const sqsClient = new SQSClient({
     region: process.env.AWS_REGION
 })
 

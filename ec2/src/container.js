@@ -1,19 +1,20 @@
 import { exec } from "child_process";
 import { promisify } from "util";
+import path from "path";
 
 const execAsync = promisify(exec);
 
 async function containerSpinUp(message) {
-    const body = JSON.parse(message.Body);
+    console.log("Spinning up Container");
 
-    console.log(body);
+    const sandboxPath = path.resolve(process.cwd(), "../");
 
     const { stdout, stderr } = await execAsync(
-        `docker run -v /media/ashwin/3e882e26-4cfd-374b-8db1-599f591e6c00/Dev/leetcode-judge/containerSetup:/sandbox leetcode-judge ${body.submissionId} ${body.language} 5`
+        `docker run -v ${sandboxPath}:/sandbox leetcode-judge ${message.submissionId} ${message.language} 5`
     );
 
     if (stderr) {
-        console.error(stderr);
+        console.error(stderr + stdout);
     } else {
         console.log(stdout);
     }
