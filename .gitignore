@@ -1,5 +1,6 @@
 .env
-/backend/node_modules
+ec2/node_modules
+backend/node_modules
 /sampleCodes
 /containerSetup/submissions
 solution

@@ -6,6 +6,7 @@ cd /sandbox
 # echo $(ls)
 submissionId=$1
 LANGUAGE=$2
+time=$3
 count=$(find submissions/$submissionId/ -maxdepth 1 -type f -regex '.*/input[0-9]+.txt' | wc -l)
 
 case "$LANGUAGE" in
@@ -26,9 +27,7 @@ cpp)
 
     for ((i=1; i<=$count; i++))
     do
-        timeout 5s ./solution \
-            < submissions/$submissionId/input$i.txt \
-            > submissions/$submissionId/solution.txt
+        timeout ${time}s ./solution < submissions/$submissionId/input$i.txt > submissions/$submissionId/solution.txt
 
         if diff -wB "submissions/$submissionId/solution.txt" "submissions/$submissionId/output$i.txt" >/dev/null; then
             echo "$i th test case passed"
@@ -56,7 +55,7 @@ java)
 
     for ((i=1; i<=$count; i++))
     do
-        timeout 5s java -cp submissions/$submissionId Main \
+        timeout ${time}s java -cp submissions/$submissionId Main \
             < submissions/$submissionId/input$i.txt \
             > submissions/$submissionId/solution.txt
 

@@ -3,7 +3,7 @@ import problemRoutes from './src/routes/problemRoutes.js';
 import submissionRoutes from './src/routes/submissionRoutes.js';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
