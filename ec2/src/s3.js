@@ -11,7 +11,7 @@ const s3Client = new S3Client({
 async function createFileDirectory(submissionId) {
     fs.promises.mkdir(`../submissions/${submissionId}`, { recursive: true }, (error) => {
         if (error) {
-            console.log(error);
+            console.log("Couldn't create directory" + error);
         } else {
             console.log("New Directory created successfully !!");
         }

@@ -6,21 +6,22 @@ import { downloadTestCases } from "./s3.js";
 async function startWorker() {
     console.log("Starting Worker");
     while (true) {
-        //try {
-        await pollSQS(process.env.SQS_URL);
-        //} catch (error) {
-        //console.log("worker error\n" + error);
-        //}
+        try {
+            await pollSQS(process.env.SQS_URL);
+        } catch (error) {
+            console.log("Worker error\n" + error);
+        }
     }
 }
 
 async function pollSQS(queueUrl) {
+    console.log("Polling SQS");
     const response = await recieveMessage(queueUrl);
     const messages = response.Messages;
 
-    console.log(messages);
-
-    let message;
+    for (_ in messages) {
+        console.log(_.MessageId);
+    }
 
     if (messages === undefined) {
         console.log("Empty message");
@@ -29,12 +30,12 @@ async function pollSQS(queueUrl) {
 
         console.log(message);
 
-        //try {
-        //await downloadTestCases(message.problemId + "/", message.submissionId);
-        await containerSpinUp(message);
-        //} finally {
-        //   console.log(await deleteMessage(queueUrl, message.ReceiptHandle));
-        //}
+        try {
+            await downloadTestCases(message.problemId + "/", message.submissionId);
+            await containerSpinUp(message);
+        } finally {
+            console.log(await deleteMessage(queueUrl, messages[0].ReceiptHandle));
+        }
     }
 
 }

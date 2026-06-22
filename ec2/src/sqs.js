@@ -18,13 +18,13 @@ export async function recieveMessage(queueUrl) {
     return await sqsClient.send(command);
 }
 
-export async function deleteMessage(queueUrl, ReceiptHandle) {
+export async function deleteMessage(queueUrl, receiptHandle) {
     const command = new DeleteMessageCommand({
         QueueUrl: queueUrl,
-        ReceiptHandle: ReceiptHandle
+        ReceiptHandle: receiptHandle
     })
 
-    console.log("Message delete");
+    console.log("Message deleted");
 
     return await sqsClient.send(command);
 }

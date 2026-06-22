@@ -2,8 +2,8 @@
 
 cd /sandbox
 
-echo $(pwd)
-echo $(ls)
+# echo $(pwd)
+# echo $(ls)
 submissionId=$1
 LANGUAGE=$2
 time=$3
@@ -14,20 +14,20 @@ case "$LANGUAGE" in
 
 cpp)
 
-    echo "C++..."
+    echo "C++ compiling"
 
-    g++ submissions/$submissionId/Main.cpp -O2 -std=c++17 -o solution
+    g++ submissions/$submissionId/Main.cpp -O2 -std=c++17 -o submissions/$submissionId/solution
 
     if [ $? -ne 0 ]; then
         echo "Compilation Error"
         exit 1
     fi
 
-    echo "Running..."
+    echo "Running C++"
 
     for ((i=1; i<=$count; i++))
     do
-        timeout ${time}s ./solution < submissions/$submissionId/input$i.txt > submissions/$submissionId/solution.txt
+        timeout ${time}s submission/$submissionId/solution < submissions/$submissionId/input$i.txt > submissions/$submissionId/solution.txt
 
         if diff -wB "submissions/$submissionId/solution.txt" "submissions/$submissionId/output$i.txt" >/dev/null; then
             echo "$i th test case passed"
@@ -42,7 +42,7 @@ cpp)
 
 java)
 
-    echo "Compiling Java..."
+    echo "Java Compiling"
 
     javac submissions/$submissionId/Main.java
 
@@ -51,7 +51,7 @@ java)
         exit 1
     fi
 
-    echo "Running..."
+    echo "Running Java"
 
     for ((i=1; i<=$count; i++))
     do
