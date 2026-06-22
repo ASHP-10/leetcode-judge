@@ -35,7 +35,7 @@ export async function downloadTestCases(prefix, submissionId) {
     console.log("Entering S3");
 
     const response = await listAllFiles(prefix);
-    console.log(response);
+    // console.log(response);
     try {
         for (const object of response.Contents) {
             const key = object.Key;
@@ -49,7 +49,7 @@ export async function downloadTestCases(prefix, submissionId) {
                 })
             );
 
-            console.log(file);
+            // console.log(file);
 
             await pipeline(
                 file.Body,

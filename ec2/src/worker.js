@@ -19,24 +19,29 @@ async function pollSQS(queueUrl) {
     const response = await recieveMessage(queueUrl);
     const messages = response.Messages;
 
-    for (_ in messages) {
-        console.log(_.MessageId);
-    }
-
-    if (messages === undefined) {
+    if (!messages || messages.length === 0) {
         console.log("Empty message");
-    } else {
-        const message = JSON.parse(messages[0].Body);
-
-        console.log(message);
-
-        try {
-            await downloadTestCases(message.problemId + "/", message.submissionId);
-            await containerSpinUp(message);
-        } finally {
-            console.log(await deleteMessage(queueUrl, messages[0].ReceiptHandle));
-        }
+        return;
     }
+
+    await Promise.all(messages.map(async (msg) => {
+        try {
+            const message = JSON.parse(msg.Body);
+            console.log("Processing submission:", message.submissionId);
+            await downloadTestCases(`${message.problemId}/`, message.submissionId);
+            await containerSpinUp(message);
+            console.log("Finished submission:", message.submissionId);
+        } catch (err) {
+            console.log("Error processing message:", err);
+        } finally {
+            try {
+                const res = await deleteMessage(queueUrl, msg.ReceiptHandle);
+                console.log("Deleted message:", res);
+            } catch (delErr) {
+                console.log("Failed to delete message:", delErr);
+            }
+        }
+    }));
 
 }
 

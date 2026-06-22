@@ -7,10 +7,10 @@ const sqsClient = new SQSClient({
 
 export async function recieveMessage(queueUrl) {
     const command = new ReceiveMessageCommand({
-        MaxNumberOfMessages: 1,
+        MaxNumberOfMessages: 10,
         MessageAttributeNames: ["All"],
         QueueUrl: queueUrl,
-        WaitTimeSeconds: 5,
+        WaitTimeSeconds: 20,
     });
 
     console.log("Message Recieved");
