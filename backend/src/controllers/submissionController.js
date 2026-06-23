@@ -1,5 +1,5 @@
 import { sendSubmissionToQueue } from "../service/sqsService.js";
-import { storeSubmissionRequest } from "../service/submissionService.js"
+import { storeSubmissionRequest, getSubmissionDetails } from "../service/submissionService.js"
 
 
 export async function submissionController(req, res, next) {
@@ -33,7 +33,8 @@ export async function submissionController(req, res, next) {
 
 export async function getSubmissionByIdController(req, res, next) {
     try {
-
+        const submission = await getSubmissionDetails(req.params.submissionId);
+        res.send(submission);
     } catch (error) {
         next(error);
     }

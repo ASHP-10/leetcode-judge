@@ -2,6 +2,12 @@
     box-sizing: border-box;
 }
 
+/* Layout and visual styles
+   - .problem-item: card-like list entries for problems
+   - .test-case: visual container for each test case
+   - .submission-form: styles for submit UI
+*/
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;

@@ -1,6 +1,8 @@
 const statusElement = document.getElementById('status');
 const problemsElement = document.getElementById('problems');
 
+// Create a list item element for a problem entry.
+// Builds a link with problem id, name and difficulty badge.
 function createProblemItem(problem) {
     const item = document.createElement('li');
     const link = document.createElement('a');
@@ -26,6 +28,7 @@ function createProblemItem(problem) {
 }
 
 async function loadProblems() {
+    // Fetch the problem list from the backend and render on the page.
     try {
         const response = await fetch('http://localhost:3000/problem');
 

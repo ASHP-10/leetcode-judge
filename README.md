@@ -9,6 +9,12 @@ The system is designed with the following AWS services and components:
 - **Amazon SQS** - Queueing system for asynchronous submission processing
 - **Amazon ECS Fargate** - Container orchestration for isolated code executiona and scalability
 - **Amazon ECR** - Docker image repository
+- **EC2 workers / systemd service** - optional worker EC2 instances that run the judge worker as a long-running service
+- **Amazon ECR** - Docker image repository
+
+Branches
+
+- This repository will use separate branches for different deployment methods (for example: `fargate` for fargate-based running). Work for other deployment targets will live in their own branches.
 
 ### High-Level Flow
 
@@ -21,7 +27,7 @@ Store Submission Metadata
    ↓
 Send Message to SQS
    ↓
-Worker / ECS Task
+Worker (EC2 instance running a long-lived worker or a container task)
    ↓
 Judge Container
    ↓
@@ -73,118 +79,68 @@ Creates a new submission and sends it for processing.
 #### Get Submission Result
 
 ```http
-GET /submission/:id
+GET /submission/:submissionId
 ```
 
-Fetches the current status and result of a submission.
+Fetches the current status and result of a submission. The endpoint returns the submission record (DynamoDB-style `Item`) while processing; the frontend polls this endpoint until `Item.status.S` is `SUCCESS` or `FAILED` and then renders the parsed result.
 
 ---
 
-# Local Judge Development
+## Cloud Deployment (EC2)
 
-## Expected Directory Structure
+This repository supports running judge workers on EC2 instances. The `ec2` branch contains code and startup configuration for EC2 workers.
 
-The container expects the following directory structure:
+Use the included `ec2/userdata.sh` as the reference for instance bootstrap steps. In short, the userdata script performs the following actions on a fresh instance:
 
-```text
-<current-directory>
-│
-└──submissions
-    └─<submission-id>
-       ├── Main.cpp
-       ├── input1.txt
-       └── output1.txt
-```
+- Installs Docker and Node.js
+- Clones the repository (sparse-checkout of the `ec2` directory)
+- Pulls the judge Docker image from ECR
+- Installs Node.js dependencies (`npm install` in the `ec2` folder)
+- Writes a `.env` file with required environment variables (SQS_URL, S3_BUCKET, AWS_REGION, CONTAINER_NAME)
+- Creates a systemd service (`/etc/systemd/system/judge-worker.service`) that runs `/usr/bin/node /home/ec2-user/leetcode-judge/ec2/src/worker.js` as `ec2-user`
+- Enables and starts the `judge-worker` service
 
-Currently supported languages:
+If you provision EC2 instances (for example via the AWS console, CloudFormation, or Terraform), include the userdata from `ec2/userdata.sh` so instances automatically start the worker service on boot.
 
-- C++
-- Java
+Frontend behavior: the web app navigates to `submission.html?submissionId=<id>` after creating a submission. The submission page repeatedly requests `GET /submission/:submissionId` on the backend (which proxies DynamoDB). While the returned DynamoDB `Item` has `status.S === "PENDING"` the frontend continues polling; when it observes `SUCCESS` or `FAILED` it parses the `Item` attributes and renders the final result.
 
 ---
 
-## Step 1: Build the Docker Image
+## Local Development (optional)
 
-Build the Docker image from the project directory.
+If you'd like to run the judge locally (single-machine testing), you can still build and run the judge Docker image manually.
+
+### Build the Docker image
 
 ```bash
 docker build -t <tag-name> <Dockerfile-directory>
 ```
 
----
-
-## Step 2: Run the Judge Container
-
-Run the container and mount the `<submissions/` directory into the sandbox environment.
+### Run the Judge Container locally
 
 ```bash
 docker run -v $(pwd)/submissions:/sandbox <tag-name> <language>
 ```
 
-### Parameters
-
-| Parameter    | Description                            |
-| ------------ | -------------------------------------- |
-| `<tag-name>` | Docker image name                      |
-| `<language>` | Programming language (`cpp` or `java`) |
-
----
-
-## Execution Flow
-
-1. Docker starts the judge container.
-2. The `/submission` directory is mounted to `/sandbox`.
-3. The entrypoint script detects the selected language.
-4. The source code is compiled.
-5. The program is executed using `input1.txt`, `input2.txt`....
-6. Output is written to `solution.txt` and checked with the `output1.txt`` output2.txt`....
-7. The Program continues executing all the test cases and stops when the first test case fails.
-
----
-
-## Output
-
-### Successful Execution
-
-A file named `solution.txt` will be generated inside the `/submission/<submission-id>/` directory.
-
-```text
-submissions
- └─<submission-id>
-    └── Main.cpp
-       ├── input1.txt
-       ├── output1.txt
-       ├── solution.txt
-       └── solution
-```
-
-### Compilation Error
-
-If compilation fails, the container exits and displays the compilation error.
-
-### Runtime Error
-
-If the program crashes or exceeds the execution timeout, the corresponding runtime error is displayed.
-
----
+This mounts a local `submissions` directory into the container and runs the judge for the selected language. This mode is useful for debugging the judge container itself.
 
 ### Planned Flow
 
 ```text
 User Submission
-      ↓
+   ↓
 Send Submission Message to SQS
-      ↓
-Launch ECS Fargate Task
-      ↓
+   ↓
+Launch Worker (EC2 instance service or container task)
+   ↓
 Judge Downloads:
     - Source Code
     - Test Cases
-      ↓
-Invokes Conatiner
-      ↓
+   ↓
+Invokes Container
+   ↓
 Compile & Execute
-      ↓
+   ↓
 Store Result in DynamoDB
 ```
 

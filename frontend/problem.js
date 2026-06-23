@@ -15,6 +15,8 @@ function getProblemId() {
     return params.get('id');
 }
 
+// Helper: read `id` from URL query string.
+
 function normalizeTestCases(problem) {
     const testCases = problem.testCases || [];
 
@@ -88,6 +90,7 @@ function renderTestCase(testCase, index) {
 }
 
 function renderProblem(problem) {
+    // Populate DOM nodes with problem details fetched from the server.
     const difficultyValue = problem.difficulty || 'Unknown';
 
     problemIdElement.textContent = `#${problem.problemId ?? '-'}`;
@@ -151,6 +154,7 @@ async function submitSolution(event) {
         return;
     }
 
+    // POST submission and redirect to submission view using returned id.
     submissionStatusElement.textContent = 'Submitting...';
 
     try {
@@ -171,7 +175,14 @@ async function submitSolution(event) {
             throw new Error(`Request failed with status ${response.status}`);
         }
 
-        //window.location.href = './submission.html';
+        const data = await response.json();
+        const submissionId = data.submissionId || data.id || data;
+        if (submissionId) {
+            // Navigate to the submission page with only submissionId
+            window.location.href = `./submission.html?submissionId=${encodeURIComponent(submissionId)}`;
+        } else {
+            submissionStatusElement.textContent = 'Submitted but did not receive a submission id.';
+        }
     } catch (error) {
         submissionStatusElement.textContent = `Could not submit solution: ${error.message}`;
     }

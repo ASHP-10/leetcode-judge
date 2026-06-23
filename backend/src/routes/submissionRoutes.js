@@ -4,6 +4,6 @@ import { submissionController, getSubmissionByIdController } from "../controller
 const router = Router();
 
 router.post("/", submissionController);
-router.get("/:id", getSubmissionByIdController)
+router.get("/:submissionId", getSubmissionByIdController)
 
 export default router;

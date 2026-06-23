@@ -1,4 +1,5 @@
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { GetItemCommand } from "@aws-sdk/client-dynamodb";
 import docClient from "../config/dynamodb.js";
 
 export async function storeSubmissionRequest(request) {
@@ -31,4 +32,26 @@ export async function storeSubmissionRequest(request) {
     } catch (error) {
         console.log(error);
     }
+}
+
+export async function getSubmissionDetails(submissionId) {
+
+    let command = new GetItemCommand({
+        TableName: "Submissions",
+        Key: {
+            submissionId: { S: submissionId }
+        },
+        ConsistentRead: true
+    })
+
+    const response = await docClient.send(command);
+    console.log(response);
+
+    if (response.$metadata.httpStatusCode == 200) {
+        console.log("Fetched submission from DB");
+    } else {
+        console.log(response.$metadata.httpStatusCode + " Error fetching submission from DB");
+    }
+
+    return response;
 }
