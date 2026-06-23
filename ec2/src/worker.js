@@ -2,6 +2,7 @@ import "dotenv/config";
 import { recieveMessage, deleteMessage } from "./sqs.js";
 import containerSpinUp from "./container.js";
 import { downloadTestCases } from "./s3.js";
+import { updateSubmissionStatus } from "./dynamoDB.js";
 
 async function startWorker() {
     console.log("Starting Worker");
@@ -25,14 +26,21 @@ async function pollSQS(queueUrl) {
     }
 
     await Promise.all(messages.map(async (msg) => {
+        let message;
         try {
-            const message = JSON.parse(msg.Body);
+            message = JSON.parse(msg.Body);
             console.log("Processing submission:", message.submissionId);
+
             await downloadTestCases(`${message.problemId}/`, message.submissionId);
+
             await containerSpinUp(message);
-            console.log("Finished submission:", message.submissionId);
+
+            await updateSubmissionStatus(message.submissionId, "SUCCESS");
+            console.log("Finished submission (SUCCESS):", message.submissionId);
         } catch (err) {
-            console.log("Error processing message:", err);
+            console.log(err);
+            await updateSubmissionStatus(message.submissionId, "FAILED", err.stderr, err.stdout);
+            console.log("Finished submission (FAILURE):", message.submissionId);
         } finally {
             try {
                 const res = await deleteMessage(queueUrl, msg.ReceiptHandle);

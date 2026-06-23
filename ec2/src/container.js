@@ -15,10 +15,10 @@ async function containerSpinUp(message) {
         `docker run -v ${sandboxPath}:/sandbox ${process.env.CONTAINER_NAME} ${message.submissionId} ${message.language} ${time}`
     );
 
+    console.log("Printing Error: " + stderr);
     if (stderr) {
-        console.error(stderr);
     } else {
-        console.log(stdout);
+        console.log("Printing output: " + stdout);
     }
 }
 

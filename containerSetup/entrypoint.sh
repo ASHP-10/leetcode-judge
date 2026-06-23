@@ -14,44 +14,37 @@ case "$LANGUAGE" in
 
 cpp)
 
-    echo "C++ compiling"
-
     g++ submissions/$submissionId/Main.cpp -O2 -std=c++17 -o submissions/$submissionId/solution
 
     if [ $? -ne 0 ]; then
-        echo "Compilation Error"
+        echo "C++ Compilation Error"
         exit 1
     fi
 
-    echo "Running C++"
 
     for ((i=1; i<=$count; i++))
     do
-        timeout ${time}s submission/$submissionId/solution < submissions/$submissionId/input$i.txt > submissions/$submissionId/solution.txt
+        timeout ${time}s submissions/$submissionId/solution < submissions/$submissionId/input$i.txt > submissions/$submissionId/solution.txt
 
         if diff -wB "submissions/$submissionId/solution.txt" "submissions/$submissionId/output$i.txt" >/dev/null; then
-            echo "$i th test case passed"
             rm submissions/$submissionId/solution.txt
         else
-            echo "Failed on $i th test case"
+            echo "{'input':'$(cat submissions/$submissionId/input$i.txt)',
+            {'output': '$(cat submissions/$submissionId/solution.txt)' } }";
             exit 1
-        fi 
+        fi
     done
 
     ;;
 
 java)
 
-    echo "Java Compiling"
-
     javac submissions/$submissionId/Main.java
 
     if [ $? -ne 0 ]; then
-        echo "Compilation Error"
+        echo "Java Compilation Error"
         exit 1
     fi
-
-    echo "Running Java"
 
     for ((i=1; i<=$count; i++))
     do
@@ -60,10 +53,10 @@ java)
             > submissions/$submissionId/solution.txt
 
         if diff -wB "submissions/$submissionId/solution.txt" "submissions/$submissionId/output$i.txt" >/dev/null; then
-            echo "$i th test case passed"
             rm submissions/$submissionId/solution.txt
         else
-            echo "Failed on $i th test case"
+            echo "{'input':'$(cat submissions/$submissionId/input$i.txt)', \
+                {'output': '$(cat submissions/$submissionId/solution.txt)' } }";
             exit 1
         fi
     done
