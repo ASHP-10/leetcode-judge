@@ -3,6 +3,8 @@ import { recieveMessage, deleteMessage } from "./sqs.js";
 import containerSpinUp from "./container.js";
 import { downloadTestCases } from "./s3.js";
 import { updateSubmissionStatus } from "./dynamoDB.js";
+import fs from "fs";
+import { pipeline } from "stream/promises";
 
 async function startWorker() {
     console.log("Starting Worker");
@@ -25,6 +27,23 @@ async function pollSQS(queueUrl) {
         return;
     }
 
+    processMessage(messages);
+}
+
+async function loadSourceFile(submissionId, langauge, code) {
+    try {
+        await pipeline(
+            code,
+            fs.createWriteStream(
+                `../submissions/${submissionId}/Main.${langauge}`
+            )
+        );
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function processMessage(messages) {
     await Promise.all(messages.map(async (msg) => {
         let message;
         try {
@@ -32,7 +51,7 @@ async function pollSQS(queueUrl) {
             console.log("Processing submission:", message.submissionId);
 
             await downloadTestCases(`${message.problemId}/`, message.submissionId);
-
+            await loadSourceFile(message.submissionId, message.language, message.code);
             await containerSpinUp(message);
 
             await updateSubmissionStatus(message.submissionId, "SUCCESS");
@@ -43,7 +62,7 @@ async function pollSQS(queueUrl) {
             console.log("Finished submission (FAILURE):", message.submissionId);
         } finally {
             try {
-                const res = await deleteMessage(queueUrl, msg.ReceiptHandle);
+                const res = await deleteMessage(process.env.SQS_URL, msg.ReceiptHandle);
                 console.log("Deleted message:", res);
             } catch (delErr) {
                 console.log("Failed to delete message:", delErr);
