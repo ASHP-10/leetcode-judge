@@ -2,7 +2,6 @@
 ec2/node_modules
 backend/node_modules
 /sampleCodes
-/containerSetup/submissions
 solution
 hi.sh 
 /ec2/submissions
